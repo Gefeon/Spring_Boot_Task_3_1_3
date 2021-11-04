@@ -37,7 +37,7 @@ public class RestUserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("admin/authorities")
+    @GetMapping("admin/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
         List<Role> roles = roleService.listRoles();
         return new ResponseEntity<>(roles, HttpStatus.OK);

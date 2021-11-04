@@ -1,6 +1,6 @@
 //Глобальный массив ролей
 let roleList = [];
-
+console.log(1)
 //Сразу получаем всех пользователей, таблица *заполняется
 getAllUsers();
 
@@ -18,7 +18,7 @@ function getAllUsers() {
 
         //Подгружаем роли в массив, это достаточно сделать один раз
         $.ajax({
-            url: '/admin/roles',
+            url: '/admin/authorities',
             method: 'GET',
             dataType: 'json',
             success: function (roles) {
@@ -201,7 +201,6 @@ $('#deleteButton').on('click', (e) => {
         }
     });
 });
-
 
 
 function getUserRolesForAdd() {
