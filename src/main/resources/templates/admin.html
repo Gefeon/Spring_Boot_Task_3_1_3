@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Admin Page</title>
+
+</head>
+<body>
+
+<!--Верхний навбар-->
+<div class="container-fluid bg-light"
+     style="padding-bottom: 1.5rem; padding-left: 0px; padding-right: 0px;">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand" th:text="${user.username} + ' with roles: ' + ${user.roles}"></span>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<!--Основной контейнер-->
+<div class="container-fluid bg-light" style="padding-left: 0px;">
+    <div class="row" style="height: max-content;">
+        <!--Боковая панель-->
+        <div class="col bg-white">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link active">Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/user" class="nav-link">User</a>
+                </li>
+            </ul>
+        </div>
+        <!--Область таблицы-->
+        <div class="col-10 bg-light">
+            <h style="font-size: xx-large;">Admin panel</h>
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="admin-tab" data-toggle="tab" href="#admin" role="tab"
+                       aria-controls="admin" aria-selected="true">User table</a>
+                </li>
+                <li class="nav-item newUser">
+                    <a class="nav-link" id="new-tab" data-toggle="tab" href="#new" role="tab"
+                       aria-controls="new" aria-selected="false">New User</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Вкладка (tab) таблица пользователей-->
+                <div class="tab-pane fade show active" id="admin" role="tabepanel">
+                    <div><h5 class="card-header">All users</h5></div>
+                    <!--  Сама Таблица  -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Surname</th>
+                            <th scope="col">Age</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col">Roles</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody id='tableAllUsers'>
+                        <!-- Новое заполнение таблицы происходит через JS -->
+                        <!-- Модальное окно Edit User -->
+                        <div class="modal" id="editModal" aria-hidden="true"
+                             role="dialog" aria-labelledby="editModalLabel">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit user</h5>
+                                        <button type="button" class="close" data-dismiss="modal">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="editModalBody">
+                                        <div class="text-center">
+                                            <div class="row justify-content-center align-items-center">
+                                                <form class="text-center" method="post" id="editUserForm">
+                                                    <div class="form-group font-weight-bold">
+                                                        <label for="id">ID</label>
+                                                        <input type="number" class="form-control" id="editId"
+                                                               name="id" readonly>
+
+                                                        <label for="editUsername">Username</label>
+                                                        <input type="text" class="form-control" id="editUsername"
+                                                               name="username">
+
+                                                        <label for="editName">Name</label>
+                                                        <input type="text" class="form-control" id="editName"
+                                                               name="name">
+
+                                                        <label for="editSurname">Surname</label>
+                                                        <input type="text" class="form-control" id="editSurname"
+                                                               name="surname">
+
+                                                        <label for="editAge">Age</label>
+                                                        <input type="number" class="form-control"
+                                                               id="editAge" name="age" autocomplete="on">
+
+                                                        <label for="editPhoneNumber">Phone Number</label>
+                                                        <input type="tel" class="form-control"
+                                                               id="editPhoneNumber" name="phoneNumber" autocomplete="on">
+
+                                                        <label for="editPassword">Password</label>
+                                                        <input type="password" class="form-control"
+                                                               id="editPassword" name="password" autocomplete="on">
+
+                                                        <label for="editRole">Role</label>
+                                                        <select multiple class="form-select w-100" size="2"
+                                                                id="editRole" name="editRoles">
+                                                        </select>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                        <button type="submit" id="editButton" class="btn btn-primary">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Модальное окно Delete User -->
+                        <div class="modal fade" id="deleteModal" aria-hidden="true"
+                             role="dialog" aria-labelledby="deleteModalLabel">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete user</h5>
+                                        <button type="button" class="close" data-dismiss="modal">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="deleteModalBody">
+                                        <div style="text-align: center;">
+                                            <div class="row justify-content-center align-items-center">
+                                                <form class="text-center" method="post" id="delUserForm">
+                                                    <div class="form-group font-weight-bold">
+
+                                                        <label for="delId">ID</label>
+                                                        <input type="number" class="form-control" id="delId"
+                                                               name="id" readonly>
+
+                                                        <label for="delUsername">Username</label>
+                                                        <input type="text" class="form-control" id="delUsername"
+                                                               name="username" readonly>
+
+                                                        <label for="delName">Name</label>
+                                                        <input type="text" class="form-control" id="delName"
+                                                               name="name" readonly>
+
+                                                        <label for="delSurname">Surname</label>
+                                                        <input type="text" class="form-control" id="delSurname"
+                                                               name="surname" readonly>
+
+                                                        <label for="delAge">Age</label>
+                                                        <input type="number" class="form-control" id="delAge"
+                                                               name="age" readonly>
+
+                                                        <label for="delPhoneNumber">Phone Number</label>
+                                                        <input type="tel" class="form-control" id="delPhoneNumber"
+                                                               name="phoneNumber" readonly>
+
+                                                        <label for="delPassword">Password</label>
+                                                        <input type="password" class="form-control" id="delPassword"
+                                                               name="password" autocomplete="on" readonly>
+
+                                                        <label for="delRole">Role</label>
+                                                        <select class="form-select w-100" size="2" id="delRole"
+                                                                name="roles">
+                                                        </select>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                        <button type="submit" id="deleteButton" class="btn btn-danger">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Вкладка (Tab) Новый пользователь -->
+                <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <h5 class="card-header">Add new user</h5>
+                    <div class="row justify-content-center align-items-center">
+                        <form class="text-center" method="post" id="addNewUserForm">
+                            <div class="form-group font-weight-bold">
+
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" name="username"
+                                       placeholder="Username">
+
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                       placeholder="Name">
+
+                                <label for="surname">Surname</label>
+                                <input type="text" class="form-control" id="surname" name="surname"
+                                       placeholder="Surname">
+
+                                <label for="age">Age</label>
+                                <input type="number" class="form-control" id="age" name="age"
+                                       placeholder="Age">
+
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber"
+                                       placeholder="Phone Number">
+
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       autocomplete="on" placeholder="Password">
+
+                                <label for="addRole">Role</label>
+                                <select multiple class="form-select" size="2" id="addRole"
+                                        name="addRoles"></select>
+
+                                <button type="button" id="addNewUserButton" class="btn btn-success">Add new user
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- В slim версии JQuery не работали ** $.getJSON() **, перезагружаю обычную-->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script src="/static.js/users.js"></script>
+
+</body>
+</html>
