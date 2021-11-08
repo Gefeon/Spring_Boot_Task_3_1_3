@@ -1,10 +1,14 @@
 package com.gefeon.Spring_Task_3_1_3.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -14,6 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -22,40 +27,39 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
+    @NotNull
+    @Column(name = "username", nullable = false, unique = true, length = 60)
+    @Size(min = 4, max = 60, message = "Username should be between 4 and 60 characters")
     private String username;
 
-    @Column(name = "password")
+    @NotNull
+    @Column(name = "password", nullable = false, length = 60)
+    @Size(min = 4, max = 60, message = "Password should be between 4 and 60 characters")
     private String password;
 
-    @Column(name = "name")
+    @NotNull
+    @Column(name = "name", nullable = false, length = 60)
+    @Size(max = 60, message = "Name should be not more than 60 characters")
     private String name;
 
-    @Column(name = "surname")
+    @NotNull
+    @Column(name = "surname", nullable = false, length = 60)
+    @Size(max = 60, message = "Surname should be not more than 60 characters")
     private String surname;
 
-    @Column(name = "age")
+    @NotNull
+    @Column(name = "age", nullable = false)
     private byte age;
 
+    @NotNull
     @Column(name = "phoneNumber")
+    @Size(min = 5, max = 60, message = "Phone number should be between 5 and 60 characters")
     private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "users_id"),
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
-
-    public User(Long id, String username, String password, String name, String surname, byte age, String phoneNumber, Set<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
-        this.phoneNumber = phoneNumber;
-        this.roles = roles;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

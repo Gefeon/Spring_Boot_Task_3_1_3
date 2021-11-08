@@ -17,6 +17,7 @@ import java.util.Set;
 public class Role implements GrantedAuthority {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -43,6 +44,6 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return name.substring(5);
+        return name;
     }
 }

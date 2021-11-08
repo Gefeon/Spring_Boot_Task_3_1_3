@@ -21,11 +21,6 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/")
-    public String startPage(){
-        return "redirect:/login";
-    }
-
     @GetMapping(value = "/user")
     public String userInfo(@AuthenticationPrincipal User user, Model model){
         model.addAttribute("user", user);

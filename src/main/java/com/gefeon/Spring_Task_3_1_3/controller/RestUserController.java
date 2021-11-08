@@ -1,6 +1,5 @@
 package com.gefeon.Spring_Task_3_1_3.controller;
 
-
 import com.gefeon.Spring_Task_3_1_3.model.Role;
 import com.gefeon.Spring_Task_3_1_3.model.User;
 import com.gefeon.Spring_Task_3_1_3.service.RoleService;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/admin")
 public class RestUserController {
 
     private final UserService userService;
@@ -25,37 +24,37 @@ public class RestUserController {
         this.roleService = roleService;
     }
 
-    @GetMapping("admin/allUsers")
-    public ResponseEntity<List<User>> getAllUsers() {
+    @GetMapping("/allUsers")
+    public ResponseEntity<List<User>> listUsers() {
         List<User> users = userService.listUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("admin/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("admin/roles")
-    public ResponseEntity<List<Role>> getAllRoles() {
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> listRoles() {
         List<Role> roles = roleService.listRoles();
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
-    @PostMapping(value = "admin")
-    public ResponseEntity<User> addNewUser(@RequestBody User user) {
+    @PostMapping
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         userService.addUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("admin")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    @PutMapping
+    public ResponseEntity<User> editUser(@RequestBody User user) {
         userService.editUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @DeleteMapping("admin/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
